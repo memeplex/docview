@@ -90,7 +90,7 @@ async function build(document: vscode.TextDocument, onBuilt?: (rule: Rule) => an
 }
 
 async function view(path: string, extensionUri: vscode.Uri, viewer?: vscode.WebviewPanel) {
-	viewer = viewer || getViewer(path);
+	viewer = viewer ?? getViewer(path);
 	if (!viewer) return;
 	const webview = viewer.webview;
 	const uri = vscode.Uri.file(path);
@@ -140,14 +140,14 @@ export async function getRules(path: string) {
 	if (!config) return [];
 	let rules: Rule[] = [];
 	for (const [name, rule] of Object.entries(config)) {
-		const match = path.match(rule.input || defaultInput);
+		const match = path.match(rule.input ?? defaultInput);
 		if (!match) continue;
 		const task = await getTask(rule.task);
 		if (!task) continue;
 		const substitutions = { ...match.groups, ...parse(path), input: path };
 		const execution = task.execution as vscode.ShellExecution;
 		const command = substitute(execution.commandLine!, substitutions);
-		const output = substitute(rule.output || defaultOutput, substitutions);
+		const output = substitute(rule.output ?? defaultOutput, substitutions);
 		for (const [variant, format] of Object.entries(rule.variants)) {
 			const substitutions = { variant, format } as { [key: string]: string };
 			const variantOutput = substitute(output, substitutions);
