@@ -8,7 +8,7 @@
     },
     "myst": {
       "task": "myst",
-      "variants": {"pdf": "pdf", "html": "html"},
+      "variants": {"html": "html"},
     },
     "typst": {
       "task": "typst",

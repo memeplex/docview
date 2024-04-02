@@ -12,13 +12,13 @@
     {
       "label": "typst",
       "type": "shell",
-      "command": "typst {{name}} {{variant}}",
+      "command": "typst compile -f pdf {{input}} {{output}}",
       "group": "build"
     },
     {
       "label": "myst",
       "type": "shell",
-      "command": "myst {{name}} {{variant}}",
+      "command": "myst-docutils-html {{input}} {{output}}",
       "group": "build"
     },
   ]
