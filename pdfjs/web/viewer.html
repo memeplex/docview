@@ -32,9 +32,9 @@ See https://github.com/adobe-type-tools/cmap-resources
 <link rel="resource" type="application/l10n" href="{{pdfjsUri}}/web/locale/locale.json">
 <script>
 document.addEventListener("webviewerloaded", function() {
-  console.log("hola 0");
   PDFViewerApplication.initializedPromise.then(function() {
     PDFViewerApplicationOptions.set("defaultZoomValue", "page-width");
+    PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0);
     PDFViewerApplication.open({url: "{{uri}}"});
   })
 });
