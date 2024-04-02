@@ -2,11 +2,13 @@ import * as vscode from 'vscode';
 import { basename, parse } from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
-	function registerCommand(name: string, action: (path: string) => any) {
+	function registerCommand(
+		name: string, action: (document: vscode.TextDocument) => any
+	) {
 		context.subscriptions.push(
 			vscode.commands.registerCommand(name, () => {
-				const path = vscode.window.activeTextEditor?.document.fileName;
-				if (path) { action(path); }
+				const document = vscode.window.activeTextEditor?.document;
+				if (document) { action(document); }
 			})
 		);
 	}
@@ -37,21 +39,22 @@ const ruleRegistry: { [path: string]: Rule } = {};
 const viewerRegistry: { [path: string]: vscode.WebviewPanel } = {};
 const error = vscode.window.showErrorMessage;
 
-function buildCommand(path: string) {
-	build(path);
+function buildCommand(document: vscode.TextDocument) {
+	build(document);
 }
 
-function viewCommand(path: string, extensionUri: vscode.Uri) {
-	build(path, (rule) => view(rule.output, extensionUri));
+function viewCommand(document: vscode.TextDocument, extensionUri: vscode.Uri) {
+	build(document, (rule) => view(rule.output, extensionUri));
 }
 
-function disconnectCommand(path: string) {
-	delete ruleRegistry[path];
+function disconnectCommand(document: vscode.TextDocument) {
+	delete ruleRegistry[document.fileName];
 }
 
-async function build(path: string, onBuilt?: (rule: Rule) => any) {
-	const rule = await getRule(path);
+async function build(document: vscode.TextDocument, onBuilt?: (rule: Rule) => any) {
+	const rule = await getRule(document.fileName);
 	if (!rule) { return; }
+	await document.save();
 	const execution = await vscode.tasks.executeTask(rule.task);
 	if (!onBuilt) { return; }
 	const disposable = vscode.tasks.onDidEndTask(event => {
