@@ -1,6 +1,7 @@
 out
 dist
 node_modules
+workspace/test.*
 .vscode-test/
 *.vsix
 *.pdf

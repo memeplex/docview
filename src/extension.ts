@@ -79,11 +79,10 @@ async function view(path: string, extensionUri: vscode.Uri) {
 		viewer.reveal();
 	} else {
 		if (path.endsWith(".pdf")) {
-			let pdfjsUri = vscode.Uri.joinPath(extensionUri, 'pdfjs');
-			const viewerUri = vscode.Uri.joinPath(pdfjsUri, 'web', 'viewer.html');
+			const viewerUri = vscode.Uri.joinPath(extensionUri, 'assets', 'viewer.html');
 			webview.html = ((await readFile(viewerUri))
-				.replaceAll('{{pdfjsUri}}', webview.asWebviewUri(pdfjsUri).toString())
-				.replaceAll('{{uri}}', webview.asWebviewUri(uri).toString())
+				.replaceAll('{{extensionUri}}', webview.asWebviewUri(extensionUri).toString())
+				.replaceAll('{{documentUri}}', webview.asWebviewUri(uri).toString())
 			);
 		} else {
 			webview.html = await readFile(uri);

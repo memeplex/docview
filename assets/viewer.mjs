@@ -9680,13 +9680,13 @@ function renderProgress(index, total) {
     progress
   }));
 }
-window.addEventListener("keydown", function (event) {
-  if (event.keyCode === 80 && (event.ctrlKey || event.metaKey) && !event.altKey && (!event.shiftKey || window.chrome || window.opera)) {
-    window.print();
-    event.preventDefault();
-    event.stopImmediatePropagation();
-  }
-}, true);
+// window.addEventListener("keydown", function (event) {
+//   if (event.keyCode === 80 && (event.ctrlKey || event.metaKey) && !event.altKey && (!event.shiftKey || window.chrome || window.opera)) {
+//     window.print();
+//     event.preventDefault();
+//     event.stopImmediatePropagation();
+//   }
+// }, true);
 if ("onbeforeprint" in window) {
   const stopPropagationIfNeeded = function (event) {
     if (event.detail !== "custom") {
@@ -11202,7 +11202,7 @@ class PDFViewer {
     this.#annotationEditorHighlightColors = options.annotationEditorHighlightColors || null;
     this.imageResourcesPath = options.imageResourcesPath || "";
     this.enablePrintAutoRotate = options.enablePrintAutoRotate || false;
-    this.removePageBorders = options.removePageBorders || false;
+    this.removePageBorders = options.removePageBorders || true;
     this.isOffscreenCanvasSupported = options.isOffscreenCanvasSupported ?? true;
     this.maxCanvasPixels = options.maxCanvasPixels;
     this.l10n = options.l10n || web_l10n_utils__WEBPACK_IMPORTED_MODULE_2__.NullL10n;
@@ -14989,7 +14989,7 @@ __webpack_async_result__();
 /************************************************************************/
 /******/ // The module cache
 /******/ var __webpack_module_cache__ = {};
-/******/ 
+/******/
 /******/ // The require function
 /******/ function __webpack_require__(moduleId) {
 /******/ 	// Check if module is in cache
@@ -15003,14 +15003,14 @@ __webpack_async_result__();
 /******/ 		// no module.loaded needed
 /******/ 		exports: {}
 /******/ 	};
-/******/ 
+/******/
 /******/ 	// Execute the module function
 /******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 
+/******/
 /******/ 	// Return the exports of the module
 /******/ 	return module.exports;
 /******/ }
-/******/ 
+/******/
 /************************************************************************/
 /******/ /* webpack/runtime/async module */
 /******/ (() => {
@@ -15080,7 +15080,7 @@ __webpack_async_result__();
 /******/ 		queue && queue.d < 0 && (queue.d = 0);
 /******/ 	};
 /******/ })();
-/******/ 
+/******/
 /******/ /* webpack/runtime/define property getters */
 /******/ (() => {
 /******/ 	// define getter functions for harmony exports
@@ -15092,14 +15092,14 @@ __webpack_async_result__();
 /******/ 		}
 /******/ 	};
 /******/ })();
-/******/ 
+/******/
 /******/ /* webpack/runtime/hasOwnProperty shorthand */
 /******/ (() => {
 /******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ })();
-/******/ 
+/******/
 /************************************************************************/
-/******/ 
+/******/
 /******/ // startup
 /******/ // Load entry module and return exports
 /******/ // This entry module used 'module' so it can't be inlined
@@ -15109,6 +15109,6 @@ __webpack_async_result__();
 /******/ var __webpack_exports__PDFViewerApplicationConstants = __webpack_exports__.PDFViewerApplicationConstants;
 /******/ var __webpack_exports__PDFViewerApplicationOptions = __webpack_exports__.PDFViewerApplicationOptions;
 /******/ export { __webpack_exports__PDFViewerApplication as PDFViewerApplication, __webpack_exports__PDFViewerApplicationConstants as PDFViewerApplicationConstants, __webpack_exports__PDFViewerApplicationOptions as PDFViewerApplicationOptions };
-/******/ 
+/******/
 
 //# sourceMappingURL=viewer.mjs.map
