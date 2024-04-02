@@ -7,19 +7,19 @@
       "label": "pandoc",
       "type": "shell",
       "command": "pandoc {{input}} -s -t {{variant}} -o {{output}}",
-      "group": "build"
+      "presentation": { "reveal": "silent" }
     },
     {
       "label": "typst",
       "type": "shell",
       "command": "typst compile -f pdf {{input}} {{output}}",
-      "group": "build"
+      "presentation": { "reveal": "silent" }
     },
     {
       "label": "myst",
       "type": "shell",
       "command": "myst-docutils-html {{input}} {{output}}",
-      "group": "build"
+      "presentation": { "reveal": "silent" }
     },
   ]
 }

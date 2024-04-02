@@ -154,16 +154,18 @@ export async function getRules(path: string) {
 			const variantCommand = substitute(
 				command, { output: variantOutput, ...substitutions }
 			);
+			const variantTask = new vscode.Task(
+				task.definition,
+				task.scope!,
+				task.name,
+				task.source,
+				new vscode.ShellExecution(variantCommand, execution.options),
+				task.problemMatchers
+			);
+			variantTask.presentationOptions = task.presentationOptions;
 			rules.push({
 				label: `${name}: ${variant}`,
-				task: new vscode.Task(
-					task.definition,
-					task.scope!,
-					task.name,
-					task.source,
-					new vscode.ShellExecution(variantCommand, execution.options),
-					task.problemMatchers
-				),
+				task: variantTask,
 				output: variantOutput
 			});
 		}
