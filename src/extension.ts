@@ -117,15 +117,19 @@ async function view(path: string, extensionUri: vscode.Uri, viewer?: vscode.Webv
 async function getRule(path: string) {
 	let rule: Rule | undefined = ruleRegistry[path];
 	if (!rule) {
-		const rules = getRules(path);
+		const rules = await getRules(path);
 		if (!rules) {
 			error(`No rule matches ${path}`);
 			return;
 		}
-		rule = await vscode.window.showQuickPick(rules, {
-			title: "Select preview rule",
-		});
-		if (!rule) { return; }
+		if (rules.length > 1) {
+			rule = await vscode.window.showQuickPick(rules, {
+				title: "Select preview rule",
+			});
+			if (!rule) { return; }
+		} else {
+			rule = rules[0];
+		}
 		ruleRegistry[path] = rule;
 	}
 	return rule;
