@@ -1,0 +1,19 @@
+{
+  "insight.rules": {
+    "pandoc": {
+      "task": "pandoc",
+      "variants": {
+        "html": "html", "revealjs": "html", "pdf": "pdf", "beamer": "pdf"
+      },
+    },
+    "myst": {
+      "task": "myst",
+      "variants": {"pdf": "pdf", "html": "html"},
+    },
+    "typst": {
+      "task": "typst",
+      "variants": {"pdf": "pdf"},
+      "input": "\\.typ$"
+    }
+  }
+}

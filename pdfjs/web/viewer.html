@@ -26,16 +26,25 @@ See https://github.com/adobe-type-tools/cmap-resources
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="google" content="notranslate">
 <title>PDF.js viewer</title>
-<script src="{{baseUri}}/build/pdf.mjs" type="module"></script>
-<script src="{{baseUri}}/web/viewer.mjs" type="module"></script>
-<link rel="stylesheet" href="{{baseUri}}/web/viewer.css">
-<link rel="resource" type="application/l10n" href="{{baseUri}}/web/locale/locale.json">
+<script src="{{pdfjsUri}}/build/pdf.mjs" type="module"></script>
+<script src="{{pdfjsUri}}/web/viewer.mjs" type="module"></script>
+<link rel="stylesheet" href="{{pdfjsUri}}/web/viewer.css">
+<link rel="resource" type="application/l10n" href="{{pdfjsUri}}/web/locale/locale.json">
 <script>
 document.addEventListener("webviewerloaded", function() {
+  console.log("hola 0");
   PDFViewerApplication.initializedPromise.then(function() {
     PDFViewerApplicationOptions.set("defaultZoomValue", "page-width");
-    PDFViewerApplication.open({url: "{{docUri}}"});
+    PDFViewerApplication.open({url: "{{uri}}"});
   })
+});
+window.addEventListener("message", async function(event) {
+  if (event.data === "reload-document") {
+    const fingerprints = PDFViewerApplication.pdfDocument.fingerprints;
+    const document = await pdfjsLib.getDocument("{{uri}}").promise;
+    document._pdfInfo.fingerprints = fingerprints;
+    PDFViewerApplication.load(document);
+  }
 });
 </script>
 <style>

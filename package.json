@@ -1,7 +1,7 @@
 {
   "name": "insight",
   "displayName": "Insight",
-  "description": "Watchdog and preview for HTML and PDF",
+  "description": "Build and view HTML and PDF documents",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.87.0"
@@ -23,10 +23,53 @@
   "contributes": {
     "commands": [
       {
-        "command": "insight.previewPdf",
-        "title": "Preview PDF"
+        "command": "insight.build",
+        "title": "Build document"
+      },
+      {
+        "command": "insight.view",
+        "title": "Build and view document"
+      },
+      {
+        "command": "insight.disconnect",
+        "title": "Disconnect builder from document"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Insight",
+      "properties": {
+        "insight.rules": {
+          "type": "object",
+          "description": "",
+          "default": {},
+          "additionalProperties": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "task": {
+                "type": "string",
+                "description": ""
+              },
+              "variants": {
+                "type": "object",
+                "description": "",
+                "additionalProperties": { "enum": ["html", "pdf"] }
+              },
+              "input": {
+                "type": "string",
+                "description": "",
+                "default": "*.md"
+              },
+              "output": {
+                "type": "string",
+                "description": "",
+                "default": "{{dir}}/{{name}}.{{format}}"
+              }
+            }
+          }
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
