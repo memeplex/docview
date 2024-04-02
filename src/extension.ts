@@ -100,7 +100,7 @@ async function view(path: string, extensionUri: vscode.Uri, viewer?: vscode.Webv
 		} else {
 			webview.html = await readFile(uri);
 		}
-		viewer.reveal();
+		viewer.reveal(undefined, true);
 	} else {
 		if (path.endsWith(".pdf")) {
 			const viewerUri = vscode.Uri.joinPath(extensionUri, 'assets', 'viewer.html');

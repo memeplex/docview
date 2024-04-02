@@ -76,7 +76,15 @@
 				"displayName": "View document",
 				"selector": [{ "filenamePattern": "{*.pdf,*.html}" }]
 			}
-		]
+		],
+    "keybindings":[
+      {
+        "key": "ctrl+alt+v",
+        "mac": "cmd+alt+v",
+        "command": "insight.view",
+        "when": "editorLangId =~ /^(markdown|restructuredtext|typst)$/ || resourceExtname =~ /^\\.(typ|rst|rest|myst)$/"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
