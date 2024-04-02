@@ -9,3 +9,6 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+workspace/**
+pdfjs/viewer.mjs
+pdfjs/viewer.html

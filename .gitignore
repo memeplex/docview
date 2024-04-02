@@ -5,3 +5,4 @@ workspace/test.*
 .vscode-test/
 *.vsix
 *.pdf
+.DS_Store
