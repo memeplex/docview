@@ -31,13 +31,13 @@ See https://github.com/adobe-type-tools/cmap-resources
 <link rel="stylesheet" href="{{extensionUri}}/pdfjs/web/viewer.css">
 <link rel="resource" type="application/l10n" href="{{extensionUri}}/pdfjs/web/locale/locale.json">
 <script>
-document.addEventListener("webviewerloaded", function() {
+document.addEventListener("webviewerloaded", () => {
   PDFViewerApplication.initializedPromise.then(function() {
     PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0);
     PDFViewerApplication.open({url: "{{documentUri}}"});
   })
 });
-window.addEventListener("message", async function(event) {
+window.addEventListener("message", async (event) => {
   if (event.data === "reload-document") {
     const fingerprints = PDFViewerApplication.pdfDocument.fingerprints;
     const document = await pdfjsLib.getDocument("{{documentUri}}").promise;
