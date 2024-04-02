@@ -8,7 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
 		context.subscriptions.push(
 			vscode.commands.registerCommand(name, () => {
 				const document = vscode.window.activeTextEditor?.document;
-				if (document) { action(document); }
+				if (document) action(document);
 			})
 		);
 	}
@@ -77,10 +77,10 @@ function disconnectCommand(document: vscode.TextDocument) {
 
 async function build(document: vscode.TextDocument, onBuilt?: (rule: Rule) => any) {
 	const rule = await getRule(document.fileName);
-	if (!rule) { return; }
+	if (!rule) return;
 	await document.save();
 	const execution = await vscode.tasks.executeTask(rule.task);
-	if (!onBuilt) { return; }
+	if (!onBuilt) return;
 	const disposable = vscode.tasks.onDidEndTask(event => {
 		if (event.execution.task === execution.task) {
 			disposable.dispose();
@@ -91,7 +91,7 @@ async function build(document: vscode.TextDocument, onBuilt?: (rule: Rule) => an
 
 async function view(path: string, extensionUri: vscode.Uri, viewer?: vscode.WebviewPanel) {
 	viewer = viewer || getViewer(path);
-	if (!viewer) { return; }
+	if (!viewer) return;
 	const webview = viewer.webview;
 	const uri = vscode.Uri.file(path);
 	if (webview.html) {
@@ -126,7 +126,7 @@ async function getRule(path: string) {
 			rule = await vscode.window.showQuickPick(rules, {
 				title: "Select preview rule",
 			});
-			if (!rule) { return; }
+			if (!rule) return;
 		} else {
 			rule = rules[0];
 		}
@@ -137,13 +137,13 @@ async function getRule(path: string) {
 
 export async function getRules(path: string) {
 	const config = vscode.workspace.getConfiguration('insight.rules');
-	if (!config) { return []; }
+	if (!config) return [];
 	let rules: Rule[] = [];
 	for (const [name, rule] of Object.entries(config)) {
 		const match = path.match(rule.input || defaultInput);
-		if (!match) { continue; }
+		if (!match) continue;
 		const task = await getTask(rule.task);
-		if (!task) { continue; }
+		if (!task) continue;
 		const substitutions = { ...match.groups, ...parse(path), input: path };
 		const execution = task.execution as vscode.ShellExecution;
 		const command = substitute(execution.commandLine!, substitutions);
@@ -176,7 +176,7 @@ export async function getRules(path: string) {
 async function getTask(name: string) {
 	const tasks = await vscode.tasks.fetchTasks();
 	for (const task of tasks) {
-		if (task.name !== name) { continue; }
+		if (task.name !== name) continue;
 		if (!(task.execution instanceof vscode.ShellExecution)) {
 			error(`Task '${name}' must be of type shell`);
 			continue;
