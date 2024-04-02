@@ -17,6 +17,13 @@ export function activate(context: vscode.ExtensionContext) {
 		viewCommand(path, context.extension.extensionUri);
 	});
 	registerCommand('insight.disconnect', disconnectCommand);
+
+	context.subscriptions.push(
+		vscode.window.registerCustomEditorProvider(
+			"insight.view", new ViewerProvider(context.extension.extensionUri)
+		)
+	);
+
 	context.subscriptions.push(
 		vscode.workspace.onDidCloseTextDocument((document) => {
 			delete ruleRegistry[document.uri.fsPath];
@@ -32,12 +39,29 @@ type Rule = {
 	output: string;
 };
 
+export class ViewerProvider implements vscode.CustomReadonlyEditorProvider {
+	constructor(private extensionUri: vscode.Uri) { }
+
+	openCustomDocument(uri: vscode.Uri) {
+		return { uri, dispose: () => { } };
+	}
+
+	resolveCustomEditor(document: vscode.CustomDocument, viewer: vscode.WebviewPanel) {
+		viewer.webview.options = webviewOptions;
+		view(document.uri.fsPath, this.extensionUri, viewer);
+	}
+}
+
 // https://github.com/microsoft/vscode/issues/209304
 const defaultInput = '\\.md$';
 const defaultOutput = '{{dir}}/{{name}}.{{format}}';
 const ruleRegistry: { [path: string]: Rule } = {};
 const viewerRegistry: { [path: string]: vscode.WebviewPanel } = {};
 const error = vscode.window.showErrorMessage;
+const webviewOptions = {
+	enableScripts: true,
+	retainContextWhenHidden: true
+};
 
 function buildCommand(document: vscode.TextDocument) {
 	build(document);
@@ -65,8 +89,8 @@ async function build(document: vscode.TextDocument, onBuilt?: (rule: Rule) => an
 	});
 }
 
-async function view(path: string, extensionUri: vscode.Uri) {
-	const viewer = getViewer(path);
+async function view(path: string, extensionUri: vscode.Uri, viewer?: vscode.WebviewPanel) {
+	viewer = viewer || getViewer(path);
 	if (!viewer) { return; }
 	const webview = viewer.webview;
 	const uri = vscode.Uri.file(path);
@@ -80,10 +104,10 @@ async function view(path: string, extensionUri: vscode.Uri) {
 	} else {
 		if (path.endsWith(".pdf")) {
 			const viewerUri = vscode.Uri.joinPath(extensionUri, 'assets', 'viewer.html');
-			webview.html = ((await readFile(viewerUri))
-				.replaceAll('{{extensionUri}}', webview.asWebviewUri(extensionUri).toString())
-				.replaceAll('{{documentUri}}', webview.asWebviewUri(uri).toString())
-			);
+			webview.html = substitute((await readFile(viewerUri)), {
+				extensionUri: webview.asWebviewUri(extensionUri).toString(),
+				documentUri: webview.asWebviewUri(uri).toString()
+			});
 		} else {
 			webview.html = await readFile(uri);
 		}
@@ -171,10 +195,7 @@ function getViewer(path: string) {
 			'insightViewer',
 			`Preview ${basename(path)}`,
 			vscode.ViewColumn.Beside,
-			{
-				enableScripts: true,
-				retainContextWhenHidden: true,
-			}
+			webviewOptions
 		);
 		viewer.onDidDispose(() => delete viewerRegistry[path]);
 		viewerRegistry[path] = viewer;

@@ -69,7 +69,14 @@
           }
         }
       }
-    }
+    },
+    "customEditors": [
+			{
+				"viewType": "insight.view",
+				"displayName": "View document",
+				"selector": [{ "filenamePattern": "{*.pdf,*.html}" }]
+			}
+		]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
