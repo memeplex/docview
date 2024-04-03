@@ -1,6 +1,6 @@
 {
-  "name": "docview",
-  "displayName": "DocView",
+  "name": "sidepeek",
+  "displayName": "SidePeek",
   "description": "Build and view HTML and PDF documents",
   "version": "0.0.1",
   "engines": {
@@ -13,32 +13,32 @@
   "icon": "assets/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/memeplex/docview.git"
+    "url": "https://github.com/memeplex/sidepeek.git"
   },
   "bugs": {
-    "url": "https://github.com/memeplex/docview/issues"
+    "url": "https://github.com/memeplex/sidepeek/issues"
   },
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "docview.build",
+        "command": "sidepeek.build",
         "title": "Build document"
       },
       {
-        "command": "docview.view",
+        "command": "sidepeek.view",
         "title": "Build and view document"
       },
       {
-        "command": "docview.disconnect",
+        "command": "sidepeek.disconnect",
         "title": "Disconnect builder from document"
       }
     ],
     "configuration": {
-      "title": "DocView",
+      "title": "SidePeek",
       "properties": {
-        "docview.rules": {
+        "sidepeek.rules": {
           "type": "object",
           "description": "",
           "default": {},
@@ -72,7 +72,7 @@
     },
     "customEditors": [
 			{
-				"viewType": "docview.view",
+				"viewType": "sidepeek.view",
 				"displayName": "View document",
 				"selector": [{ "filenamePattern": "{*.pdf,*.html}" }]
 			}
@@ -81,7 +81,7 @@
       {
         "key": "ctrl+alt+v",
         "mac": "cmd+alt+v",
-        "command": "docview.view",
+        "command": "sidepeek.view",
         "when": "editorLangId =~ /^(markdown|restructuredtext|typst)$/ || resourceExtname =~ /^\\.(typ|rst|rest|myst)$/"
       }
     ]

@@ -1,5 +1,5 @@
 {
-  "docview.rules": {
+  "sidepeek.rules": {
     "pandoc": {
       "task": "pandoc",
       "variants": {
