@@ -13,10 +13,7 @@
       "warn",
       {
         "selector": "import",
-        "format": [
-          "camelCase",
-          "PascalCase"
-        ]
+        "format": ["camelCase", "PascalCase"]
       }
     ],
     "@typescript-eslint/semi": "warn",
@@ -24,7 +21,8 @@
     "eqeqeq": "warn",
     "no-throw-literal": "warn",
     "semi": "off",
-    "max-len": ["warn", { "code": 100, "tabWidth": 2 }]
+    "max-len": ["warn", { "code": 80 }],
+    "max-depth": "warn"
   },
   "ignorePatterns": [
     "out",

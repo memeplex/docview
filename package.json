@@ -1,6 +1,6 @@
 {
-  "name": "insight",
-  "displayName": "Insight",
+  "name": "docview",
+  "displayName": "DocView",
   "description": "Build and view HTML and PDF documents",
   "version": "0.0.1",
   "engines": {
@@ -13,32 +13,32 @@
   "icon": "assets/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/memeplex/insight.git"
+    "url": "https://github.com/memeplex/docview.git"
   },
   "bugs": {
-    "url": "https://github.com/memeplex/insight/issues"
+    "url": "https://github.com/memeplex/docview/issues"
   },
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "insight.build",
+        "command": "docview.build",
         "title": "Build document"
       },
       {
-        "command": "insight.view",
+        "command": "docview.view",
         "title": "Build and view document"
       },
       {
-        "command": "insight.disconnect",
+        "command": "docview.disconnect",
         "title": "Disconnect builder from document"
       }
     ],
     "configuration": {
-      "title": "Insight",
+      "title": "DocView",
       "properties": {
-        "insight.rules": {
+        "docview.rules": {
           "type": "object",
           "description": "",
           "default": {},
@@ -72,7 +72,7 @@
     },
     "customEditors": [
 			{
-				"viewType": "insight.view",
+				"viewType": "docview.view",
 				"displayName": "View document",
 				"selector": [{ "filenamePattern": "{*.pdf,*.html}" }]
 			}
@@ -81,7 +81,7 @@
       {
         "key": "ctrl+alt+v",
         "mac": "cmd+alt+v",
-        "command": "insight.view",
+        "command": "docview.view",
         "when": "editorLangId =~ /^(markdown|restructuredtext|typst)$/ || resourceExtname =~ /^\\.(typ|rst|rest|myst)$/"
       }
     ]

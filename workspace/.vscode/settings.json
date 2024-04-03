@@ -1,5 +1,5 @@
 {
-  "insight.rules": {
+  "docview.rules": {
     "pandoc": {
       "task": "pandoc",
       "variants": {
