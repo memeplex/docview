@@ -12,11 +12,11 @@ export function activate(context: vscode.ExtensionContext) {
       })
     );
   }
-  registerCommand('sidepeek.build', buildCommand);
+  registerCommand('sidepeek.build', build);
   registerCommand('sidepeek.view', (path) => {
-    viewCommand(path, context.extension.extensionUri);
+    view(path, context.extension.extensionUri);
   });
-  registerCommand('sidepeek.disconnect', disconnectCommand);
+  registerCommand('sidepeek.disconnect', disconnect);
 
   context.subscriptions.push(
     vscode.window.registerCustomEditorProvider(
@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidCloseTextDocument(disconnectCommand)
+    vscode.workspace.onDidCloseTextDocument(disconnect)
   );
 }
 
@@ -62,16 +62,14 @@ const ruleRegistry: { [path: string]: Rule } = {};
 const viewerRegistry: { [path: string]: vscode.WebviewPanel } = {};
 const error = vscode.window.showErrorMessage;
 
-async function buildCommand(document: vscode.TextDocument) {
+async function build(document: vscode.TextDocument) {
   const rule = await getRule(document.fileName);
   if (!rule) return;
   await document.save();
   vscode.tasks.executeTask(rule.task);
 }
 
-async function viewCommand(
-  document: vscode.TextDocument, extensionUri: vscode.Uri
-) {
+async function view(document: vscode.TextDocument, extensionUri: vscode.Uri) {
   const rule = await getRule(document.fileName);
   if (!rule) return;
   const viewer = viewerRegistry[rule.output];
@@ -89,7 +87,7 @@ async function viewCommand(
   }
 }
 
-function disconnectCommand(document: vscode.TextDocument) {
+function disconnect(document: vscode.TextDocument) {
   delete ruleRegistry[document.fileName];
 }
 
