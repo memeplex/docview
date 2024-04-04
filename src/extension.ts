@@ -20,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.window.registerCustomEditorProvider(
-      "sidepeek.view",
+      'sidepeek.view',
       new ViewerProvider(context.extension.extensionUri),
       { webviewOptions: { retainContextWhenHidden: true } }
     )
@@ -101,7 +101,7 @@ async function getRule(path: string) {
       rule = rules[0];
     } else {
       rule = await vscode.window.showQuickPick(rules, {
-        title: "Select preview rule",
+        title: 'Select preview rule',
       });
     }
     if (!rule) return;
@@ -166,8 +166,8 @@ async function getTask(name: string) {
 }
 
 function createViewer(path: string, extensionUri: vscode.Uri) {
-  if (!path.endsWith(".pdf") && !path.endsWith(".html")) {
-    error("Viewer support html and pdf formats only");
+  if (!path.endsWith('.pdf') && !path.endsWith('.html')) {
+    error('Viewer support html and pdf formats only');
     return;
   }
   const viewer = viewerRegistry[path] = vscode.window.createWebviewPanel(
@@ -187,7 +187,7 @@ async function initViewer(
   const webview = viewer.webview;
   const uri = vscode.Uri.file(path);
   const render = async () => {
-    if (path.endsWith(".pdf")) {
+    if (path.endsWith('.pdf')) {
       if (!webview.html) {
         const html = await readFile(
           vscode.Uri.joinPath(extensionUri, 'assets/viewer.html')
@@ -198,7 +198,7 @@ async function initViewer(
           cspSource: webview.cspSource
         });
       } else {
-        webview.postMessage("reload-document");
+        webview.postMessage('reload-document');
       }
     } else {
       webview.html = await readFile(uri);
