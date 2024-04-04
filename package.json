@@ -8,7 +8,7 @@
   },
   "categories": ["Visualization", "Data Science", "Other"],
   "keywords": [
-    "pdf", "html", "viewer", "preview", "watchdog", "pandoc", "markdown"
+    "pdf", "html", "viewer", "preview", "build", "document", "pandoc", "markdown"
   ],
   "icon": "assets/icon.png",
   "repository": {

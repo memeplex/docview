@@ -12,15 +12,15 @@ export function activate(context: vscode.ExtensionContext) {
       })
     );
   }
-  registerCommand('insight.build', buildCommand);
-  registerCommand('insight.view', (path) => {
+  registerCommand('sidepeek.build', buildCommand);
+  registerCommand('sidepeek.view', (path) => {
     viewCommand(path, context.extension.extensionUri);
   });
-  registerCommand('insight.disconnect', disconnectCommand);
+  registerCommand('sidepeek.disconnect', disconnectCommand);
 
   context.subscriptions.push(
     vscode.window.registerCustomEditorProvider(
-      "insight.view", new ViewerProvider(context.extension.extensionUri)
+      "sidepeek.view", new ViewerProvider(context.extension.extensionUri)
     )
   );
 
@@ -49,8 +49,12 @@ export class ViewerProvider implements vscode.CustomReadonlyEditorProvider {
   resolveCustomEditor(
     document: vscode.CustomDocument, viewer: vscode.WebviewPanel
   ) {
+    const path = document.uri.fsPath;
     viewer.webview.options = webviewOptions;
-    view(document.uri.fsPath, this.extensionUri, viewer);
+    const watcher = vscode.workspace.createFileSystemWatcher(path);
+    watcher.onDidChange(() => view(path, this.extensionUri, viewer));
+    watcher.onDidDelete(() => { viewer!.dispose(); watcher.dispose(); });
+    view(path, this.extensionUri, viewer);
   }
 }
 
@@ -142,7 +146,7 @@ async function getRule(path: string) {
 }
 
 export async function getRules(path: string) {
-  const config = vscode.workspace.getConfiguration('insight.rules');
+  const config = vscode.workspace.getConfiguration('sidepeek.rules');
   if (!config) return [];
   let rules: Rule[] = [];
   for (const [name, rule] of Object.entries(config)) {
@@ -204,7 +208,7 @@ function getViewer(path: string) {
       return;
     }
     viewer = vscode.window.createWebviewPanel(
-      'insightViewer',
+      'sidepeekViewer',
       `Preview ${basename(path)}`,
       vscode.ViewColumn.Beside,
       webviewOptions
