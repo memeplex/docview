@@ -23,6 +23,8 @@ See https://github.com/adobe-type-tools/cmap-resources
 <html dir="ltr" mozdisallowselectionprint>
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'unsafe-inline' {{cspSource}}; style-src 'unsafe-inline' {{cspSource}}; img-src blob: data: {{cspSource}}; connect-src {{cspSource}};">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="google" content="notranslate">
 <title>PDF.js viewer</title>
@@ -31,20 +33,20 @@ See https://github.com/adobe-type-tools/cmap-resources
 <link rel="stylesheet" href="{{extensionUri}}/pdfjs/web/viewer.css">
 <link rel="resource" type="application/l10n" href="{{extensionUri}}/pdfjs/web/locale/locale.json">
 <script>
-document.addEventListener("webviewerloaded", () => {
-  PDFViewerApplication.initializedPromise.then(function() {
-    PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0);
-    PDFViewerApplication.open({url: "{{documentUri}}"});
-  })
-});
-window.addEventListener("message", async (event) => {
-  if (event.data === "reload-document") {
-    const fingerprints = PDFViewerApplication.pdfDocument.fingerprints;
-    const document = await pdfjsLib.getDocument("{{documentUri}}").promise;
-    document._pdfInfo.fingerprints = fingerprints;
-    PDFViewerApplication.load(document);
-  }
-});
+  document.addEventListener("webviewerloaded", () => {
+    PDFViewerApplication.initializedPromise.then(function() {
+      PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0);
+      PDFViewerApplication.open({url: "{{documentUri}}"});
+    })
+  });
+  window.addEventListener("message", async (event) => {
+    if (event.data === "reload-document") {
+      const fingerprints = PDFViewerApplication.pdfDocument.fingerprints;
+      const document = await pdfjsLib.getDocument("{{documentUri}}").promise;
+      document._pdfInfo.fingerprints = fingerprints;
+      PDFViewerApplication.load(document);
+    }
+  });
 </script>
 <style>
   body { padding: 0; }

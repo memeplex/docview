@@ -28,7 +28,7 @@
       },
       {
         "command": "sidepeek.view",
-        "title": "Build and view document"
+        "title": "View document"
       },
       {
         "command": "sidepeek.disconnect",
@@ -79,10 +79,16 @@
 		],
     "keybindings":[
       {
+        "key": "ctrl+alt+b",
+        "command": "sidepeek.build"
+      },
+      {
         "key": "ctrl+alt+v",
-        "mac": "cmd+alt+v",
-        "command": "sidepeek.view",
-        "when": "editorLangId =~ /^(markdown|restructuredtext|typst)$/ || resourceExtname =~ /^\\.(typ|rst|rest|myst)$/"
+        "command": "sidepeek.view"
+      },
+      {
+        "key": "ctrl+alt+shift+b",
+        "command": "sidepeek.disconnect"
       }
     ]
   },

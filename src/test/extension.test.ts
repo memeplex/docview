@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { getRules } from '../extension';
+import { matchRules } from '../extension';
 
 
 suite('Extension Test Suite', () => {
@@ -8,7 +8,7 @@ suite('Extension Test Suite', () => {
 
 	test('Labels', async () => {
 		assert.deepEqual(
-			(await getRules("test.md")).map(rule => rule.label),
+			(await matchRules("test.md")).map(rule => rule.label),
 			[
 				'pandoc: html',
 				'pandoc: revealjs',
@@ -19,7 +19,7 @@ suite('Extension Test Suite', () => {
 			]
 		);
 		assert.deepEqual(
-			(await getRules("test.typ")).map(rule => rule.label),
+			(await matchRules("test.typ")).map(rule => rule.label),
 			['typst: pdf']
 		);
 	});

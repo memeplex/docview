@@ -20,14 +20,14 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.window.registerCustomEditorProvider(
-      "sidepeek.view", new ViewerProvider(context.extension.extensionUri)
+      "sidepeek.view",
+      new ViewerProvider(context.extension.extensionUri),
+      { webviewOptions: { retainContextWhenHidden: true } }
     )
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidCloseTextDocument((document) => {
-      delete ruleRegistry[document.uri.fsPath];
-    })
+    vscode.workspace.onDidCloseTextDocument(disconnectCommand)
   );
 }
 
@@ -49,12 +49,9 @@ export class ViewerProvider implements vscode.CustomReadonlyEditorProvider {
   resolveCustomEditor(
     document: vscode.CustomDocument, viewer: vscode.WebviewPanel
   ) {
-    const path = document.uri.fsPath;
-    viewer.webview.options = webviewOptions;
-    const watcher = vscode.workspace.createFileSystemWatcher(path);
-    watcher.onDidChange(() => view(path, this.extensionUri, viewer));
-    watcher.onDidDelete(() => { viewer!.dispose(); watcher.dispose(); });
-    view(path, this.extensionUri, viewer);
+    // https://github.com/microsoft/vscode/issues/209576
+    viewer.webview.options = { enableScripts: true };
+    initViewer(viewer, document.uri.fsPath, this.extensionUri);
   }
 }
 
@@ -64,88 +61,58 @@ const defaultOutput = '{{dir}}/{{name}}.{{format}}';
 const ruleRegistry: { [path: string]: Rule } = {};
 const viewerRegistry: { [path: string]: vscode.WebviewPanel } = {};
 const error = vscode.window.showErrorMessage;
-const webviewOptions = {
-  enableScripts: true,
-  retainContextWhenHidden: true
-};
 
-function buildCommand(document: vscode.TextDocument) {
-  build(document);
+async function buildCommand(document: vscode.TextDocument) {
+  const rule = await getRule(document.fileName);
+  if (!rule) return;
+  await document.save();
+  vscode.tasks.executeTask(rule.task);
 }
 
-function viewCommand(document: vscode.TextDocument, extensionUri: vscode.Uri) {
-  build(document, (rule) => view(rule.output, extensionUri));
+async function viewCommand(
+  document: vscode.TextDocument, extensionUri: vscode.Uri
+) {
+  const rule = await getRule(document.fileName);
+  if (!rule) return;
+  const viewer = viewerRegistry[rule.output];
+  if (viewer) {
+    viewer.reveal();
+  } else {
+    await document.save();
+    const disposable = vscode.tasks.onDidEndTask(event => {
+      if (event.execution.task === rule.task) {
+        disposable.dispose();
+        createViewer(rule.output, extensionUri);
+      }
+    });
+    vscode.tasks.executeTask(rule.task);
+  }
 }
 
 function disconnectCommand(document: vscode.TextDocument) {
   delete ruleRegistry[document.fileName];
 }
 
-async function build(
-  document: vscode.TextDocument, onBuilt?: (rule: Rule) => any
-) {
-  const rule = await getRule(document.fileName);
-  if (!rule) return;
-  await document.save();
-  const execution = await vscode.tasks.executeTask(rule.task);
-  if (!onBuilt) return;
-  const disposable = vscode.tasks.onDidEndTask(event => {
-    if (event.execution.task === execution.task) {
-      disposable.dispose();
-      onBuilt(rule);
-    }
-  });
-}
-
-async function view(
-  path: string, extensionUri: vscode.Uri, viewer?: vscode.WebviewPanel
-) {
-  viewer = viewer ?? getViewer(path);
-  if (!viewer) return;
-  const webview = viewer.webview;
-  const uri = vscode.Uri.file(path);
-  if (webview.html) {
-    if (path.endsWith(".pdf")) {
-      webview.postMessage("reload-document");
-    } else {
-      webview.html = await readFile(uri);
-    }
-    viewer.reveal(undefined, true);
-  } else {
-    if (path.endsWith(".pdf")) {
-      const viewerUri = vscode.Uri.joinPath(extensionUri, 'assets/viewer.html');
-      webview.html = substitute((await readFile(viewerUri)), {
-        extensionUri: webview.asWebviewUri(extensionUri).toString(),
-        documentUri: webview.asWebviewUri(uri).toString()
-      });
-    } else {
-      webview.html = await readFile(uri);
-    }
-  }
-}
-
 async function getRule(path: string) {
   let rule: Rule | undefined = ruleRegistry[path];
   if (!rule) {
-    const rules = await getRules(path);
-    if (!rules) {
+    const rules = await matchRules(path);
+    if (rules.length === 0) {
       error(`No rule matches ${path}`);
-      return;
-    }
-    if (rules.length > 1) {
+    } else if (rules.length === 1) {
+      rule = rules[0];
+    } else {
       rule = await vscode.window.showQuickPick(rules, {
         title: "Select preview rule",
       });
-      if (!rule) return;
-    } else {
-      rule = rules[0];
     }
+    if (!rule) return;
     ruleRegistry[path] = rule;
   }
   return rule;
 }
 
-export async function getRules(path: string) {
+export async function matchRules(path: string) {
   const config = vscode.workspace.getConfiguration('sidepeek.rules');
   if (!config) return [];
   let rules: Rule[] = [];
@@ -200,23 +167,51 @@ async function getTask(name: string) {
   error(`No valid task for '${name}'`);
 }
 
-function getViewer(path: string) {
-  let viewer = viewerRegistry[path];
-  if (!viewer) {
-    if (!path.endsWith(".pdf") && !path.endsWith(".html")) {
-      error("Viewer support html and pdf formats only");
-      return;
-    }
-    viewer = vscode.window.createWebviewPanel(
-      'sidepeekViewer',
-      `Preview ${basename(path)}`,
-      vscode.ViewColumn.Beside,
-      webviewOptions
-    );
-    viewer.onDidDispose(() => delete viewerRegistry[path]);
-    viewerRegistry[path] = viewer;
+function createViewer(path: string, extensionUri: vscode.Uri) {
+  if (!path.endsWith(".pdf") && !path.endsWith(".html")) {
+    error("Viewer support html and pdf formats only");
+    return;
   }
+  const viewer = viewerRegistry[path] = vscode.window.createWebviewPanel(
+    'sidepeekViewer',
+    `Preview ${basename(path)}`,
+    vscode.ViewColumn.Beside,
+    { retainContextWhenHidden: true, enableScripts: true }
+  );
+  viewer.onDidDispose(() => delete viewerRegistry[path]);
+  initViewer(viewer, path, extensionUri);
   return viewer;
+}
+
+async function initViewer(
+  viewer: vscode.WebviewPanel, path: string, extensionUri: vscode.Uri
+) {
+  const webview = viewer.webview;
+  const uri = vscode.Uri.file(path);
+  const render = async () => {
+    if (path.endsWith(".pdf")) {
+      if (!webview.html) {
+        const html = await readFile(
+          vscode.Uri.joinPath(extensionUri, 'assets/viewer.html')
+        );
+        webview.html = substitute(html, {
+          extensionUri: webview.asWebviewUri(extensionUri).toString(),
+          documentUri: webview.asWebviewUri(uri).toString(),
+          cspSource: webview.cspSource
+        });
+      } else {
+        webview.postMessage("reload-document");
+      }
+    } else {
+      webview.html = await readFile(uri);
+    }
+    console.log(webview.html);
+  };
+  const watcher = vscode.workspace.createFileSystemWatcher(path);
+  watcher.onDidChange(render);
+  watcher.onDidDelete(() => viewer.dispose());
+  viewer.onDidDispose(() => watcher.dispose());
+  render();
 }
 
 function substitute(text: string, substitutions: { [key: string]: string }) {
