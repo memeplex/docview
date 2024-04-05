@@ -14,7 +14,6 @@ suite('Extension Test Suite', () => {
 				'pandoc: revealjs',
 				'pandoc: pdf',
 				'pandoc: beamer',
-				'myst: pdf',
 				'myst: html'
 			]
 		);
