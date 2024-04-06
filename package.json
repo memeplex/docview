@@ -113,7 +113,7 @@
       {
         "viewType": "sidepeek.view",
         "displayName": "View document",
-				"selector": [{ "filenamePattern": "{*.pdf,*.html}" }]
+        "selector": [{ "filenamePattern": "{*.pdf,*.html}" }]
       }
     ],
     "keybindings": [
