@@ -7,11 +7,7 @@ const defaultInput = '\\.md$';
 const defaultOutput = '{{dir}}/{{name}}.{{format}}';
 const registry: { [path: string]: Rule } = {};
 
-type Rule = {
-  label: string;
-  task: vscode.Task;
-  output: string;
-};
+type Rule = { label: string, task: vscode.Task, output: string };
 
 export async function build(document: vscode.TextDocument) {
   const rule = await getRule(document.fileName);

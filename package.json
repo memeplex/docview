@@ -53,7 +53,10 @@
               "variants": {
                 "type": "object",
                 "description": "",
-                "additionalProperties": { "enum": ["html", "pdf"] }
+                "additionalProperties": {
+                  "type": "string",
+                  "enum": ["html", "pdf"]
+                }
               },
               "input": {
                 "type": "string",
@@ -67,17 +70,52 @@
               }
             }
           }
+        },
+        "sidepeek.hover.languages": {
+          "type": "array",
+          "description": "",
+          "default": ["markdown"]
+        },
+        "sidepeek.math.delimiters": {
+          "type": "array",
+          "description": "",
+          "default": [
+            { "left": "$$", "right": "$$", "inline": false },
+            { "left": "\\[", "right": "\\]", "inline": false },
+            { "left": "$", "right": "$", "inline": true }
+          ],
+          "items": {
+            "type": "object",
+            "description": "",
+            "left": {
+              "type": "string",
+              "description": ""
+            },
+            "right": {
+              "type": "string",
+              "description": ""
+            },
+            "inline": {
+              "type": "boolean",
+              "description": ""
+            }
+          }
+        },
+        "sidepeek.math.scanUpTo": {
+          "type": "number",
+          "description": "",
+          "default": 20
         }
       }
     },
     "customEditors": [
-			{
-				"viewType": "sidepeek.view",
-				"displayName": "View document",
+      {
+        "viewType": "sidepeek.view",
+        "displayName": "View document",
 				"selector": [{ "filenamePattern": "{*.pdf,*.html}" }]
-			}
-		],
-    "keybindings":[
+      }
+    ],
+    "keybindings": [
       {
         "key": "ctrl+alt+b",
         "command": "sidepeek.build"
@@ -101,14 +139,17 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.87.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/vscode": "^1.87.0",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.3.3",
     "@vscode/test-cli": "^0.0.8",
-    "@vscode/test-electron": "^2.3.9"
+    "@vscode/test-electron": "^2.3.9",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "mathjax": "^3.2.2"
   }
 }

@@ -1,30 +1,25 @@
 import * as vscode from 'vscode';
 import { build, disconnect } from './rules';
-import { view, registerProvider } from './viewer';
+import { view, registerProvider as registerViewerProvider } from './viewer';
+import { registerProviders as registerMathProviders } from './hover';
 
 export function activate(context: vscode.ExtensionContext) {
-  function registerCommand(
-    name: string, action: (document: vscode.TextDocument) => any
-  ) {
-    context.subscriptions.push(
-      vscode.commands.registerCommand(name, () => {
-        const document = vscode.window.activeTextEditor?.document;
-        if (document) action(document);
-      })
-    );
+  function withDocument(action: (document: vscode.TextDocument) => any) {
+    const document = vscode.window.activeTextEditor?.document;
+    if (document) action(document);
   }
-  registerCommand('sidepeek.build', build);
-  registerCommand('sidepeek.view', (path) => {
-    view(path, context.extension.extensionUri);
-  });
-  registerCommand('sidepeek.disconnect', disconnect);
+
+  const registerCommand = vscode.commands.registerCommand;
 
   context.subscriptions.push(
-    registerProvider(context.extension.extensionUri)
-  );
-
-  context.subscriptions.push(
-    vscode.workspace.onDidCloseTextDocument(disconnect)
+    registerCommand('sidepeek.build', () => withDocument(build)),
+    registerCommand('sidepeek.view', () => withDocument(
+      (document) => view(document, context.extension.extensionUri)
+    )),
+    registerCommand('sidepeek.disconnect', () => withDocument(disconnect)),
+    registerViewerProvider(context.extension.extensionUri),
+    ...registerMathProviders(),
+    vscode.workspace.onDidCloseTextDocument(disconnect),
   );
 }
 
