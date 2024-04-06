@@ -54,9 +54,13 @@ async function tex2svg(tex: string, inline: boolean) {
     const options = { loader: { load: ['input/tex', 'output/svg'] } };
     MathJax = await require('mathjax').init(options);
   }
-  const svg = MathJax.startup.adaptor.innerHTML(
-    MathJax.tex2svg(tex, { display: !inline })
-  );
+  const dark = [
+    vscode.ColorThemeKind.Dark, vscode.ColorThemeKind.HighContrast
+  ].includes(vscode.window.activeColorTheme.kind);
+  let css = `* { font-size: 115%; color: ${dark ? 'white' : 'black'}; }`;
+  let svg = MathJax.tex2svg(tex, { display: !inline });
+  svg = MathJax.startup.adaptor.innerHTML(svg);
+  svg = svg.replace(/<defs>/, `<defs><style>${css}</style>`);
   const base64 = Buffer.from(svg).toString('base64');
   return 'data:image/svg+xml;base64,' + base64;
 }
