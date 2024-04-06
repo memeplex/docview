@@ -1,6 +1,6 @@
 {
   "name": "sidepeek",
-  "displayName": "SidePeek",
+  "displayName": "Sidepeek",
   "description": "Build and view HTML and PDF documents",
   "version": "0.0.1",
   "engines": {
@@ -36,7 +36,7 @@
       }
     ],
     "configuration": {
-      "title": "SidePeek",
+      "title": "Sidepeek",
       "properties": {
         "sidepeek.rules": {
           "type": "object",

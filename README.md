@@ -1,4 +1,4 @@
-# VSCode SidePeek
+# VSCode Sidepeek
 
 This is the README for your extension "sidepeek". After writing up a brief description, we recommend including the following sections.
 
