@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { basename } from 'path';
+import { uri as extensionUri } from './extension';
 import { getRule } from './rules';
 import { error, readFile, substitute } from './util';
 
@@ -21,7 +22,7 @@ class ViewerProvider implements vscode.CustomReadonlyEditorProvider {
   }
 }
 
-export function registerProvider(extensionUri: vscode.Uri) {
+export function registerProvider() {
   return vscode.window.registerCustomEditorProvider(
     'sidepeek.view',
     new ViewerProvider(extensionUri),
@@ -29,9 +30,7 @@ export function registerProvider(extensionUri: vscode.Uri) {
   );
 }
 
-export async function view(
-  document: vscode.TextDocument, extensionUri: vscode.Uri
-) {
+export async function view(document: vscode.TextDocument) {
   const rule = await getRule(document.fileName);
   if (!rule) return;
   const viewer = registry[rule.output];
@@ -42,14 +41,14 @@ export async function view(
     const disposable = vscode.tasks.onDidEndTask(event => {
       if (event.execution.task === rule.task) {
         disposable.dispose();
-        createViewer(rule.output, extensionUri);
+        createViewer(rule.output);
       }
     });
     vscode.tasks.executeTask(rule.task);
   }
 }
 
-function createViewer(path: string, extensionUri: vscode.Uri) {
+function createViewer(path: string) {
   if (!path.endsWith('.pdf') && !path.endsWith('.html')) {
     error('Viewer support html and pdf formats only');
     return;

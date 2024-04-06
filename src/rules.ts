@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { parse } from 'path';
+import { uri as extensionUri } from './extension';
 import { error, substitute } from './util';
 
 // https://github.com/microsoft/vscode/issues/209304
@@ -49,7 +50,8 @@ async function matchRules(path: string) {
     if (!match) continue;
     const task = await getTask(rule.task);
     if (!task) continue;
-    const substitutions = { ...match.groups, ...parse(path), input: path };
+    const doc = vscode.Uri.joinPath(extensionUri, 'assets/doc').fsPath;
+    const substitutions = { ...match.groups, ...parse(path), doc, input: path };
     const execution = task.execution as vscode.ShellExecution;
     const command = substitute(execution.commandLine!, substitutions);
     const output = substitute(rule.output ?? defaultOutput, substitutions);
