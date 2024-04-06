@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/memeplex/sidepeek/issues"
   },
-  "activationEvents": [],
+  "activationEvents": ["onStartupFinished"],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -79,7 +79,7 @@
         "sidepeek.math.delimiters": {
           "type": "array",
           "description": "",
-"scope": "language-overridable",
+          "scope": "language-overridable",
           "default": [
             { "left": "$$", "right": "$$", "inline": false },
             { "left": "\\[", "right": "\\]", "inline": false },
