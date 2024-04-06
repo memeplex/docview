@@ -44,6 +44,7 @@ async function matchRules(path: string) {
   if (!config) return [];
   let rules: Rule[] = [];
   for (const [name, rule] of Object.entries(config)) {
+    if (!rule) continue;
     const match = path.match(rule.input ?? defaultInput);
     if (!match) continue;
     const task = await getTask(rule.task);

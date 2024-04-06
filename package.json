@@ -43,7 +43,7 @@
           "description": "",
           "default": {},
           "additionalProperties": {
-            "type": "object",
+            "type": ["object", "null"],
             "description": "",
             "properties": {
               "task": {
