@@ -79,6 +79,7 @@
         "sidepeek.math.delimiters": {
           "type": "array",
           "description": "",
+"scope": "language-overridable",
           "default": [
             { "left": "$$", "right": "$$", "inline": false },
             { "left": "\\[", "right": "\\]", "inline": false },
