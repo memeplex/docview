@@ -9680,13 +9680,13 @@ function renderProgress(index, total) {
     progress
   }));
 }
-window.addEventListener("keydown", function (event) {
-  if (event.keyCode === 80 && (event.ctrlKey || event.metaKey) && !event.altKey && (!event.shiftKey || window.chrome || window.opera)) {
-    window.print();
-    event.preventDefault();
-    event.stopImmediatePropagation();
-  }
-}, true);
+// window.addEventListener("keydown", function (event) {
+//   if (event.keyCode === 80 && (event.ctrlKey || event.metaKey) && !event.altKey && (!event.shiftKey || window.chrome || window.opera)) {
+//     window.print();
+//     event.preventDefault();
+//     event.stopImmediatePropagation();
+//   }
+// }, true);
 if ("onbeforeprint" in window) {
   const stopPropagationIfNeeded = function (event) {
     if (event.detail !== "custom") {
@@ -11202,7 +11202,7 @@ class PDFViewer {
     this.#annotationEditorHighlightColors = options.annotationEditorHighlightColors || null;
     this.imageResourcesPath = options.imageResourcesPath || "";
     this.enablePrintAutoRotate = options.enablePrintAutoRotate || false;
-    this.removePageBorders = options.removePageBorders || false;
+    this.removePageBorders = options.removePageBorders || true;
     this.isOffscreenCanvasSupported = options.isOffscreenCanvasSupported ?? true;
     this.maxCanvasPixels = options.maxCanvasPixels;
     this.l10n = options.l10n || web_l10n_utils__WEBPACK_IMPORTED_MODULE_2__.NullL10n;

@@ -18,7 +18,7 @@ class ViewerProvider implements vscode.CustomReadonlyEditorProvider {
   ) {
     // https://github.com/microsoft/vscode/issues/209576
     viewer.webview.options = { enableScripts: true };
-    initViewer(viewer, document.uri.fsPath, this.extensionUri);
+    initViewer(viewer, document.uri.fsPath);
   }
 }
 
@@ -60,38 +60,38 @@ function createViewer(path: string) {
     { retainContextWhenHidden: true, enableScripts: true }
   );
   viewer.onDidDispose(() => delete registry[path]);
-  initViewer(viewer, path, extensionUri);
+  initViewer(viewer, path);
   return viewer;
 }
 
-
-async function initViewer(
-  viewer: vscode.WebviewPanel, path: string, extensionUri: vscode.Uri
-) {
+async function initViewer(viewer: vscode.WebviewPanel, path: string) {
   const webview = viewer.webview;
   const uri = vscode.Uri.file(path);
   const render = async () => {
-    if (path.endsWith('.pdf')) {
-      if (!webview.html) {
-        const html = await readFile(
-          vscode.Uri.joinPath(extensionUri, 'assets/viewer.html')
-        );
-        webview.html = substitute(html, {
-          extensionUri: webview.asWebviewUri(extensionUri).toString(),
-          documentUri: webview.asWebviewUri(uri).toString(),
-          cspSource: webview.cspSource
-        });
-      } else {
-        webview.postMessage('reload-document');
-      }
-    } else {
+    if (path.endsWith('.html')) {
       webview.html = await readFile(uri);
+    } else {
+      renderPdf(webview, uri);
     }
-    console.log(webview.html);
   };
   const watcher = vscode.workspace.createFileSystemWatcher(path);
   watcher.onDidChange(render);
   watcher.onDidDelete(() => viewer.dispose());
   viewer.onDidDispose(() => watcher.dispose());
   render();
+}
+
+async function renderPdf(webview: vscode.Webview, uri: vscode.Uri) {
+  if (!webview.html) {
+    const pdfjsUri = vscode.Uri.joinPath(extensionUri, 'pdfjs');
+    const viewerUri = vscode.Uri.joinPath(pdfjsUri, 'web/viewer.html');
+    const html = await readFile(viewerUri);
+    webview.html = substitute(html, {
+      pdfjsUri: webview.asWebviewUri(pdfjsUri).toString(),
+      documentUri: webview.asWebviewUri(uri).toString(),
+      cspSource: webview.cspSource
+    });
+  } else {
+    webview.postMessage('reload-document');
+  }
 }

@@ -10,7 +10,7 @@
   "keywords": [
     "pdf", "html", "viewer", "preview", "build", "document", "pandoc", "markdown"
   ],
-  "icon": "assets/icon.png",
+  "icon": "misc/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/memeplex/sidepeek.git"

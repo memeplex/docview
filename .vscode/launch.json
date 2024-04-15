@@ -8,7 +8,7 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "${workspaceFolder}/workspace"
+        "${workspaceFolder}/misc/example"
       ],
       "outFiles": [
         "${workspaceFolder}/out/**/*.js"
